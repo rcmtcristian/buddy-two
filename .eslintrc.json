@@ -1,0 +1,20 @@
+{
+  "ignorePatterns": [
+    "**/.next/**",
+    "**/_next/**",
+    "**/dist/**",
+    "**/storybook-static/**",
+    "**/lib/**"
+  ],
+  "extends": ["next/core-web-vitals", "prettier"],
+  "rules": {
+    "react/jsx-sort-props": [
+      "error",
+      {
+        "callbacksLast": true,
+        "shorthandLast": true
+      }
+    ],
+    "import/order": "error"
+  }
+}
