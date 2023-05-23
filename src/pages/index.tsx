@@ -14,7 +14,6 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import { isDev } from '../lib/constants'
 import { trackCursor } from '../lib/three'
 
-// import { HTMLLayout } from '../../components/html-layout'
 // const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
@@ -85,7 +84,7 @@ export default function Home() {
     /* HELPERS */
     const controls = new OrbitControls(camera, canvas)
     controls.target.set(0, 0, 0)
-    controls.enabled = true
+    controls.enabled = false
 
     const axesHelper = new THREE.AxesHelper(1)
     axesHelper.visible = true
@@ -113,6 +112,7 @@ export default function Home() {
 
     const onWheel = (e: WheelEvent) => {
       wheelDelta = e.deltaY * 0.002
+      snapGroup.rotation.y += wheelDelta
       wheelScrollTarget += wheelDelta
       snapGroupTargetRotation += wheelDelta
     }
@@ -126,18 +126,18 @@ export default function Home() {
     let snapGroup: THREE.Group
     let snapGroupTargetRotation = 0
 
-    monitor = new THREE.Mesh(
-      new THREE.OctahedronGeometry(1, 0),
-      new THREE.MeshStandardMaterial({
-        color: 'red',
-      }),
-    )
+    // monitor = new THREE.Mesh(
+    //   new THREE.OctahedronGeometry(1, 0),
+    //   new THREE.MeshStandardMaterial({
+    //     color: 'red',
+    //   }),
+    // )
 
-    scene.add(monitor)
+    // scene.add(monitor)
     const render = () => {
       controls.update()
 
-      /* new stuff */
+      /* New stuff */
       if (monitor) {
         const lerpAmount = 0.1
         const rangeOfMovementRad = Math.PI / 4
@@ -169,10 +169,45 @@ export default function Home() {
     gltfLoader.setMeshoptDecoder(MeshoptDecoder)
 
     gltfLoader
-      .loadAsync('/models/Monitor-Looper.glb')
+      .loadAsync('/models/Monitor-looper.glb')
       /* MODEL SETUP */
       .then((gltf) => {
         //GLTF is loaded
+        /* `const nodes = keyBy(gltf.scene.children, 'name')` is creating an object where each child of
+      the loaded GLTF model is a property of the object, with the property name being the name of
+      the child. This is done using the `keyBy` function from the Lodash library. This object can
+      then be used to easily access specific children of the model by their name, as demonstrated in
+      the code with `monitor = nodes['Monitor']`. */
+        const nodes = keyBy(gltf.scene.children, 'name')
+
+        /* `monitor = nodes['Monitor']` is assigning the child object with the name 'Monitor' from the
+        loaded GLTF model to the `monitor` variable. This allows for easy access to the specific
+        child object for further manipulation, such as scaling or rotating. */
+        monitor = nodes['Monitor']
+        /* `monitor.scale.set(1.2, 1.2, 1.2)` is setting the scale of the `monitor` object to 1.2 times
+       its original size in all three dimensions (x, y, and z). This makes the monitor model larger
+       and more visible in the scene. */
+        monitor.scale.set(1.2, 1.2, 1.2)
+
+        /* This line of code is setting the side of the material of the first child of the `monitor`
+       object to `THREE.FrontSide`. This determines which side of the geometry will be rendered.
+       `THREE.FrontSide` means that only the front faces of the geometry will be rendered, while
+       `THREE.BackSide` would render only the back faces, and `THREE.DoubleSide` would render both.
+       The `as any` syntax is used to bypass TypeScript's type checking and allow access to the
+       `material` property without a type error. */
+        ;(monitor.children[0] as any).material.side = THREE.FrontSide
+
+        /* `screenTexture = (monitor.children[1] as any).material.map` is assigning the texture map of
+        the second child of the `monitor` object to the `screenTexture` variable. The `as any`
+        syntax is used to bypass TypeScript's type checking and allow access to the `material` and
+        `map` properties without a type error. This texture map can be used to manipulate the
+        appearance of the screen on the monitor model. */
+        screenTexture = (monitor.children[1] as any).material.map
+
+        snapGroup = new THREE.Group()
+        snapGroup.add(monitor)
+
+        scene.add(snapGroup)
       })
       /* START LOOP */
       .then(() => {
