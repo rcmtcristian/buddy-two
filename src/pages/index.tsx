@@ -140,8 +140,22 @@ export default function Home() {
       /* New stuff */
       if (monitor) {
         const lerpAmount = 0.1
+        /* `const rangeOfMovementRad = Math.PI / 4` is setting the range of movement for the monitor
+        model in radians. It is used in the `render` function to calculate the rotation of the
+        monitor based on the cursor position. By setting the range of movement to `Math.PI / 4`, the
+        monitor can rotate up to 45 degrees in any direction based on the cursor position. */
+        //animate the monitor to follow the cursor <- basically
         const rangeOfMovementRad = Math.PI / 4
-        // Makes it so that the rotation is based at a lower speed on rotation
+        // Makes it so that the rotation is based at a lower speed on rotation <- basically
+        /* This line of code is using the `THREE.MathUtils.lerp` function to smoothly interpolate the
+       current rotation of the `monitor` object around the y-axis towards a target rotation based on
+       the x-coordinate of the cursor position. The `cursorTracker.cursor.x * rangeOfMovementRad`
+       expression calculates the target rotation in radians based on the x-coordinate of the cursor
+       position and a range of movement specified by `rangeOfMovementRad`. The `lerpAmount`
+       parameter determines the amount of interpolation to apply, with a value of 0.1 indicating a
+       relatively slow interpolation. By using interpolation, the rotation of the `monitor` object
+       is smoothly updated in response to changes in the cursor position, creating a more fluid and
+       natural interaction. */
         monitor.rotation.y = THREE.MathUtils.lerp(
           monitor.rotation.y,
           cursorTracker.cursor.x * rangeOfMovementRad,
@@ -156,6 +170,31 @@ export default function Home() {
 
         // monitor.rotation.y = THREE.MathUtils.lerp(monitor.rotation.y, snapGroupTargetRotation, 0.1) <- this version makes it so that it rotates on zoom
         // monitor.rotation.y = (cursorTracker.cursor.x * Math.PI) / 4 <- this is the original
+
+        const snapPoint = 0
+        const snapPointAttractionForce = 0.2 // How much the snap point attracts the rotation
+        const distanceToSnapPointShortestDelta =
+          ((snapGroup.rotation.y - snapPoint + Math.PI) % (Math.PI * 2)) - Math.PI
+
+        // > Normalized in terms of PI radians, -1 is -180 degrees away, 1 is 180 degrees away
+        const normalizedDistanceToSnapPoint = distanceToSnapPointShortestDelta / Math.PI
+
+        // > How much the snap point attracts the monitor rotation with the current rotation value
+        const resultantSnapForce = -normalizedDistanceToSnapPoint * snapPointAttractionForce
+
+        // > Apply snap force to target rotation
+        snapGroupTargetRotation += resultantSnapForce
+
+        /* Animate screen texture */
+        const rounds = snapGroup.rotation.y / (Math.PI * 2)
+        screenTexture.offset.y = rounds / 2 // Divided by two bc the txt is half angy half neutral
+
+        /* Lerp snap rotation to target */
+        snapGroup.rotation.y = THREE.MathUtils.lerp(
+          snapGroup.rotation.y,
+          snapGroupTargetRotation,
+          lerpAmount,
+        )
       }
       /* end of  stuff */
       renderer.render(scene, camera)
@@ -166,10 +205,16 @@ export default function Home() {
 
     /* LOAD MODEL */
     const gltfLoader = new GLTFLoader()
+    /* `gltfLoader.setMeshoptDecoder(MeshoptDecoder)` is setting the MeshoptDecoder as the decoder to be
+   used by the GLTFLoader. MeshoptDecoder is a library that provides fast and efficient decoding of
+   compressed mesh data, which can significantly reduce the size of 3D models and improve loading
+   times. By setting the MeshoptDecoder as the decoder for the GLTFLoader, the loader is able to
+   efficiently decode compressed mesh data in GLTF files, resulting in faster loading times for 3D
+   models. */
     gltfLoader.setMeshoptDecoder(MeshoptDecoder)
 
     gltfLoader
-      .loadAsync('/models/Monitor-looper.glb')
+      .loadAsync('./models/Monitor-looper.glb')
       /* MODEL SETUP */
       .then((gltf) => {
         //GLTF is loaded
@@ -288,7 +333,7 @@ export default function Home() {
   )
 }
 
-Home.Title = 'Twitch Demo No. 2'
+Home.Title = 'Buddy Monitor'
 Home.Description = (
   <>
     <p>Key points to learn with this demo:</p>
