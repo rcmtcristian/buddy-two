@@ -10,8 +10,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // @ts-ignore
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { isDev } from '../lib/constants'
 import Stats from 'three/examples/jsm/libs/stats.module'
+import { isDev } from '../lib/constants'
 import { trackCursor } from '../lib/three'
 
 // import { HTMLLayout } from '../../components/html-layout'
@@ -224,13 +224,13 @@ export default function Home() {
           }}
         >
           <div
+            ref={progressRef}
             style={{
               background: 'white',
               height: '100%',
               width: 0,
               borderRadius: '9999px',
             }}
-            ref={progressRef}
           />
           <p
             style={{
@@ -248,7 +248,7 @@ export default function Home() {
         </div>
       </div>
 
-      <canvas style={{ width: '100%', height: '100vh' }} ref={canvasRef} />
+      <canvas ref={canvasRef} style={{ width: '100%', height: '100vh' }} />
     </>
   )
 }
@@ -272,4 +272,3 @@ Home.Description = (
     </ul>
   </>
 )
-// Home.Layout = HTMLLayout

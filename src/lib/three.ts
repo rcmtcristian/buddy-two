@@ -11,7 +11,7 @@ import { safeWindow } from './constants'
 
 export const trackCursor = (
   onMove?: (cursor: Vector2, event: MouseEvent) => void,
-  target?: HTMLElement
+  target?: HTMLElement,
 ) => {
   const hasMoved = { current: false }
   const firstRead = { current: true }
@@ -33,7 +33,7 @@ export const trackCursor = (
   const _target = target || safeWindow
 
   _target.addEventListener('mousemove', onMouseMove, {
-    passive: true
+    passive: true,
   })
 
   return {
@@ -46,7 +46,7 @@ export const trackCursor = (
     cursor,
     destroy: () => {
       _target.removeEventListener('mousemove', onMouseMove)
-    }
+    },
   }
 }
 
@@ -56,7 +56,7 @@ export const defaultCamera = new PerspectiveCamera(
   40,
   (safeWindow.innerWidth || 0) / (safeWindow.innerHeight || 0),
   0.1,
-  1000
+  1000,
 )
 
 defaultCamera.position.x = 0
@@ -77,7 +77,7 @@ export const getViewport = () => {
   const size: WindowSize = {
     width: window.innerWidth,
     height: window.innerHeight,
-    ratio: window.innerWidth / window.innerHeight
+    ratio: window.innerWidth / window.innerHeight,
   }
 
   const handleResize = (_e: any, immediate = false) => {
@@ -110,7 +110,7 @@ export const getViewport = () => {
 
   return {
     size,
-    destroy
+    destroy,
   }
 }
 
@@ -128,23 +128,20 @@ const position = new THREE.Vector3()
 const tempTarget = new THREE.Vector3()
 const canvasSize = new THREE.Vector2()
 
-export const getWorld = (
-  gl: THREE.WebGLRenderer,
-  camera: THREE.PerspectiveCamera
-) => {
+export const getWorld = (gl: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) => {
   const getCanvasSize = () => {
     gl.getSize(canvasSize)
 
     return {
       width: canvasSize.x,
       height: canvasSize.y,
-      ratio: canvasSize.x / canvasSize.y
+      ratio: canvasSize.x / canvasSize.y,
     }
   }
 
   const getViewportSizeInWorldUnits = (
     camera: THREE.PerspectiveCamera,
-    target: THREE.Vector3 | Parameters<THREE.Vector3['set']> = defaultTarget
+    target: THREE.Vector3 | Parameters<THREE.Vector3['set']> = defaultTarget,
   ) => {
     if (target instanceof THREE.Vector3) {
       tempTarget.copy(target)
@@ -177,20 +174,20 @@ export const getWorld = (
 
     const size = fromViewport({
       width: rect.width,
-      height: rect.height
+      height: rect.height,
     })
 
     const position = fromViewport({
       width: rect.left,
-      height: rect.top
+      height: rect.top,
     })
 
     return {
       size,
       position: {
         x: position.width - width / 2 + size.width / 2,
-        y: -(position.height - height / 2 + size.height / 2)
-      }
+        y: -(position.height - height / 2 + size.height / 2),
+      },
     }
   }
 
@@ -200,7 +197,7 @@ export const getWorld = (
     fromBoundingRect,
     destroy: () => {
       // noop
-    }
+    },
   }
 }
 
@@ -217,7 +214,7 @@ type EffectsFunc = (elapsedTime: number) => void
 export const createWorld = ({
   camera = defaultCamera,
   rendererConfig,
-  withRaycaster = false
+  withRaycaster = false,
 }: CreateRendererArgs) => {
   const renderer = new WebGLRenderer(rendererConfig)
   renderer.setSize(window.innerWidth, window.innerHeight)
@@ -245,6 +242,7 @@ export const createWorld = ({
   let _getWorld: ReturnType<typeof getWorld> | undefined
 
   if (camera instanceof PerspectiveCamera) {
+    // @ts-ignore
     _getWorld = getWorld(camera)
   }
 
@@ -288,14 +286,11 @@ export const createWorld = ({
     destroy,
     raycaster,
     cursor: cursorTracker.cursor,
-    getWorld: _getWorld
+    getWorld: _getWorld,
   }
 }
 
-export const getCameraLookAtEuler = (
-  position: THREE.Vector3,
-  target: THREE.Vector3
-) => {
+export const getCameraLookAtEuler = (position: THREE.Vector3, target: THREE.Vector3) => {
   /*
   Camera records towards z: -1 of its own coordinate system so we need to use the Matrix4 transformation API
   wich supports this eye -> target coordinate system using the lookAt method. See the source code of the Object3D
@@ -350,8 +345,8 @@ export const getBezierCurves = (curve: Curve[], scale = 1) => {
         new THREE.Vector3(p1.px, p1.pz, p1.py).multiplyScalar(scale),
         new THREE.Vector3(p1.hrx, p1.hrz, p1.hry).multiplyScalar(scale),
         new THREE.Vector3(p2.hlx, p2.hlz, p2.hly).multiplyScalar(scale),
-        new THREE.Vector3(p2.px, p2.pz, p2.py).multiplyScalar(scale)
-      )
+        new THREE.Vector3(p2.px, p2.pz, p2.py).multiplyScalar(scale),
+      ),
     )
   }
 
