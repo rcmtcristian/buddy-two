@@ -14,8 +14,6 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import { isDev } from '../lib/constants'
 import { trackCursor } from '../lib/three'
 
-// const inter = Inter({ subsets: ['latin'] })
-
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
@@ -87,19 +85,19 @@ export default function Home() {
     controls.enabled = false
 
     const axesHelper = new THREE.AxesHelper(1)
-    axesHelper.visible = true
+    axesHelper.visible = false
     scene.add(axesHelper)
 
     const gridHelper = new THREE.GridHelper(10, 10)
-    gridHelper.visible = true
+    gridHelper.visible = false
     scene.add(gridHelper)
 
     const dirLightColorHelper = new THREE.DirectionalLightHelper(dirLightColor, 0.5)
-    dirLightColorHelper.visible = true
+    dirLightColorHelper.visible = false
     scene.add(dirLightColorHelper)
 
     const dirLightWhiteHelper = new THREE.DirectionalLightHelper(dirLightWhite, 0.5)
-    dirLightWhiteHelper.visible = true
+    dirLightWhiteHelper.visible = false
     scene.add(dirLightWhiteHelper)
 
     /* TRACK CURSOR */
@@ -112,8 +110,15 @@ export default function Home() {
 
     const onWheel = (e: WheelEvent) => {
       wheelDelta = e.deltaY * 0.002
-      snapGroup.rotation.y += wheelDelta
+      /* The above code is written in CoffeeScript, not TypeScript. It is rotating the `snapGroup`
+      object around the y-axis by the value of `wheelDelta`. */
+      // snapGroup.rotation.y += wheelDelta
       wheelScrollTarget += wheelDelta
+
+      /* This line is incrementing the value of the variable `snapGroupTargetRotation` by the value
+    of `wheelDelta`. The `+=` operator is shorthand for adding the value on the right-hand side to
+    the current value of the variable on the left-hand side and assigning the result back to the
+    variable. */
       snapGroupTargetRotation += wheelDelta
     }
 
@@ -168,6 +173,9 @@ export default function Home() {
           lerpAmount,
         )
 
+        wheelScroll = THREE.MathUtils.lerp(wheelScroll, wheelScrollTarget, lerpAmount)
+        const deltaScroll = wheelScroll - wheelScrollTarget
+
         // monitor.rotation.y = THREE.MathUtils.lerp(monitor.rotation.y, snapGroupTargetRotation, 0.1) <- this version makes it so that it rotates on zoom
         // monitor.rotation.y = (cursorTracker.cursor.x * Math.PI) / 4 <- this is the original
 
@@ -182,10 +190,14 @@ export default function Home() {
         // > How much the snap point attracts the monitor rotation with the current rotation value
         const resultantSnapForce = -normalizedDistanceToSnapPoint * snapPointAttractionForce
 
-        // > Apply snap force to target rotation
+        // > Apply snap force to target rotation // To know how many rotations the monitor has done <- basically
         snapGroupTargetRotation += resultantSnapForce
 
         /* Animate screen texture */
+        /* The code is calculating the number of full rotations (in terms of radians) that have
+        been applied to an object represented by the `snapGroup` variable. It does this by dividing
+        the current rotation of the object around the y-axis (`snapGroup.rotation.y`) by the total
+        angle of a full rotation (2π radians), and storing the result in the `rounds` variable. */
         const rounds = snapGroup.rotation.y / (Math.PI * 2)
         screenTexture.offset.y = rounds / 2 // Divided by two bc the txt is half angy half neutral
 
@@ -195,6 +207,12 @@ export default function Home() {
           snapGroupTargetRotation,
           lerpAmount,
         )
+
+        progress.style.width = `${THREE.MathUtils.clamp(
+          Math.abs(deltaScroll * 0.1) * 100,
+          0,
+          100,
+        ).toFixed(2)}%`
       }
       /* end of  stuff */
       renderer.render(scene, camera)
@@ -248,7 +266,8 @@ export default function Home() {
         `map` properties without a type error. This texture map can be used to manipulate the
         appearance of the screen on the monitor model. */
         screenTexture = (monitor.children[1] as any).material.map
-
+        // screenTexture.wrapS = THREE.RepeatWrapping
+        // screenTexture.wrapT = THREE.MirroredRepeatWrapping <- flip the face
         snapGroup = new THREE.Group()
         snapGroup.add(monitor)
 
