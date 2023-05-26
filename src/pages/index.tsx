@@ -232,7 +232,7 @@ export default function Home() {
     gltfLoader.setMeshoptDecoder(MeshoptDecoder)
 
     gltfLoader
-      .loadAsync('./models/Monitor-looper.glb')
+      .loadAsync('/models/Monitor-Looper.glb')
       /* MODEL SETUP */
       .then((gltf) => {
         //GLTF is loaded

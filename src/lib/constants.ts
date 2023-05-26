@@ -12,13 +12,21 @@ if (typeof process.env.NEXT_PUBLIC_SITE_URL !== 'string') {
 1. Create .env file at the root of your project.
 2. Add NEXT_PUBLIC_SITE_URL=http://localhost:3000
 3. For other environments (like production), make sure you set the correct URL.
-    `
+    `,
   )
 }
 
-export const siteURL = new URL(process.env.NEXT_PUBLIC_SITE_URL)
-export const siteOrigin = siteURL.origin
-export const githubUrl = 'https://github.com/basementstudio/experiments'
+export const getBaseUrl = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return `${process.env.NEXT_PUBLIC_SITE_URL}`
+  }
+
+  return `${process.env.NEXT_PUBLIC_URL}`
+}
+// export const siteURL = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_URL)
+// export const siteURL = new URL(process.env.NEXT_PUBLIC_SITE_URL)
+export const siteOrigin = getBaseUrl()
+export const githubUrl = 'https://buddy-two-rcmtcristian.vercel.app/'
 
 // we like putting this in the JavaScript console,
 // as our signature.
@@ -42,8 +50,8 @@ export const defaultMeta = {
   ogImage: `${siteOrigin}/og.png`,
   twitter: {
     handle: '@basementstudio',
-    site: '@basementstudio'
-  }
+    site: '@basementstudio',
+  },
 }
 
 // TODO: add variable (NEXT_PUBLIC_GA_TRACKING_ID) to env if necessary
