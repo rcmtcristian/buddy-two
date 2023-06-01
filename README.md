@@ -1,4 +1,5 @@
-![image](https://github.com/rcmtcristian/buddy-two/assets/20276785/ebd89e66-f9ad-461d-a7fa-323670e23ffd)
+![image](https://github.com/rcmtcristian/buddy-two/assets/20276785/ea2a3e8a-591e-4b1a-abe9-7ec31a193562)
+
 # TvBuddy
 
 TvBuddy is an interactive three.js demo that combines the power of three.js, Vercel, Next.js, TypeScript, and Firebase to create an engaging and immersive TV experience. With TvBuddy, users can explore a variety of interactive 3D scenes and environments, bringing their TV viewing to a whole new level.
