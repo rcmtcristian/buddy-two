@@ -51,8 +51,6 @@ To run TvBuddy locally, follow these steps:
 
 During the development of TvBuddy, I identified several areas for optimization, including:
 
-Sure! Here's an expanded version of the bullet points you provided:
-
 - Give it an intro animation: Create an engaging intro animation for TvBuddy that introduces the concept and features of the interactive TV experience. This animation could involve camera movements, object animations, or any creative approach that captures the user's attention.
 
 - Find the functions that make the frame rate work properly across all screens: Ensure that the animation plays at a consistent speed and smooth frame rate across different devices and screen resolutions. Optimize performance by adjusting the rendering settings, optimizing code, and testing the application on various devices to ensure a consistent experience for all users.
@@ -66,7 +64,9 @@ Sure! Here's an expanded version of the bullet points you provided:
 - Add interaction and annoyance: Implement interactive behavior for TvBuddy, allowing the user to interact with the screen. For example, when the user clicks on the screen repeatedly, TvBuddy could exhibit signs of annoyance, such as shaking or displaying playful reactions. Look into ray casting to detect mouse clicks and perform actions based on the interaction.
 
 - Create a better environment: Improve the environment in which TvBuddy exists. This could involve adding realistic textures, lighting effects, or incorporating a virtual room or setting that complements the interactive TV experience. Enhance the overall atmosphere to create a more immersive and visually captivating environment.
+
 # Credits 
+
 Invaluable lessons were learned, and I would like to acknowledge the Teachings of the following individuals and resources:
 
 - Basement Studio: [GitHub](https://github.com/basementstudio) for providing valuable insights and lessons learned in three.js development and interactive experiences.
